@@ -1,6 +1,6 @@
 ## NaVID模型结构：
 
-![image-20250302201018311](https://github.com/Molion121/llm_related121/blob/main/VLN/image-20250302165954686.png)
+![image-20250302201018311](https://github.com/Molion121/llm_related121/blob/main/VLN/img/image-20250302165954686.png)
 
 模型训练的权重为两个部分，一个是BERT另一个是Vicuna-7B，按照LLaMA-VID的Instruction Tuning范式
 
@@ -16,7 +16,7 @@
 
 查询向量与相应的视觉进行交叉得到权重再乘以原先的向量就可以得到相应指令的结合图像表示，也就对应的代码这几步
 
-![image-20250302204117161](C:\Users\92809\AppData\Roaming\Typora\typora-user-images\image-20250302204117161.png)
+![image-20250302204117161](https://github.com/Molion121/llm_related121/blob/main/VLN/img/image-20250302204117161.png)
 
 最终投影回到LLM语言空间
 
@@ -26,7 +26,7 @@
 
 与LLama-Vid不同，如果将每一帧只是作为2个token输入，这不适用与Navid
 
-![image-20250302165954686](C:\Users\92809\AppData\Roaming\Typora\typora-user-images\image-20250302165954686.png)
+![image-20250302165954686](https://github.com/Molion121/llm_related121/blob/main/VLN/img/image-20250302165954686.png)
 
 从类似LLaMA-VID可以看到类似的代码：
 
@@ -34,17 +34,17 @@
 
 基本如上所述，
 
-![image-20250302204357689](C:\Users\92809\AppData\Roaming\Typora\typora-user-images\image-20250302204357689.png)
+![image-20250302204357689](https://github.com/Molion121/llm_related121/blob/main/VLN/img/image-20250302204357689.png)
 
 ### visembed
 
 论文里面写的是对于当前frame让其转换为64个token，而针对历史帧，将其转换为4帧
 
-![](C:\Users\92809\AppData\Roaming\Typora\typora-user-images\image-20250302202804556.png)
+![](https://github.com/Molion121/llm_related121/blob/main/VLN/img/image-20250302202804556.png)
 
 将历史及当前帧组合成的token通过grid pool也就相当于2d的平均池化，同时通过投影层投影到LLM language空间中
 
-![image-20250302203449892](C:\Users\92809\AppData\Roaming\Typora\typora-user-images\image-20250302203449892.png)
+![image-20250302203449892](https://github.com/Molion121/llm_related121/blob/main/VLN/img/image-20250302203449892.png)
 
 最终组合的token是将ctx embed和visembed组合
 
@@ -54,7 +54,7 @@
 
 后续就是当前帧仍然为64token，但是中间的64帧如果有就是为4token，超过64帧前就是1token
 
-![image-20250302205228195](C:\Users\92809\AppData\Roaming\Typora\typora-user-images\image-20250302205228195.png)
+![image-20250302205228195](https://github.com/Molion121/llm_related121/blob/main/VLN/img/image-20250302205228195.png)
 
 算法只针对临界状况，也就是说如果当前帧要变成中间的64帧，就通过类似前面的grid pool变成4token
 
@@ -64,7 +64,7 @@
 
 如果确实很相似，则在原有基础上叠加信息即可，如果不相似再额外给token
 
-![image-20250302205714603](C:\Users\92809\AppData\Roaming\Typora\typora-user-images\image-20250302205714603.png)
+![image-20250302205714603](https://github.com/Molion121/llm_related121/blob/main/VLN/img/image-20250302205714603.png)
 
 ## 复现遇到的问题：
 
@@ -90,14 +90,14 @@ torchvision 0.15.2
 
 正常需要的文件目录为
 
-![image-20250302210202440](C:\Users\92809\AppData\Roaming\Typora\typora-user-images\image-20250302210202440.png)
+![image-20250302210202440](https://github.com/Molion121/llm_related121/blob/main/VLN/img/image-20250302210202440.png)
 
 我们可以将相应的navid权重文件里面的config.json中的*mm_vision_tower*属性值修改为对应的路径，默认会通过调用build vision tower函数来获取属性值
 
-![image-20250303102157758](C:\Users\92809\AppData\Roaming\Typora\typora-user-images\image-20250303102157758.png)
+![image-20250303102157758](https://github.com/Molion121/llm_related121/blob/main/VLN/img/image-20250303102157758.png)
 
 3、实验结果
 
 生成相应的log以及video
 
-![image-20250302210305006](C:\Users\92809\AppData\Roaming\Typora\typora-user-images\image-20250302210305006.png)
+![image-20250302210305006](https://github.com/Molion121/llm_related121/blob/main/VLN/img/image-20250302210305006.png)
