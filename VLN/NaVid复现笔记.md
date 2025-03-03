@@ -1,6 +1,6 @@
 ## NaVID模型结构：
 
-![image-20250302201018311](C:\Users\92809\AppData\Roaming\Typora\typora-user-images\image-20250302201018311.png)
+![image-20250302201018311](https://github.com/Molion121/llm_related121/blob/main/VLN/image-20250302165954686.png)
 
 模型训练的权重为两个部分，一个是BERT另一个是Vicuna-7B，按照LLaMA-VID的Instruction Tuning范式
 
